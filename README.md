@@ -6,7 +6,7 @@
 主要修改代码在cpp/main.cc里面，要完整编译的话，只要把这个项目，放到rknn_model_zoo文件夹下面的example里面，然后按照官方步骤编译即可。
 还有librockchip_mpp.so和librockchip_mpp.so.1是两个软链接，自己可以创建一下，指向librockchip_mpp.so.0。
 ```
-![demo](1.gif)
+<img src="1.gif" width="100">
 
 
 
