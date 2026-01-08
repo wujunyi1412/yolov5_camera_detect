@@ -39,9 +39,23 @@ endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../3rdparty/ 3rdparty.out)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/ utils.out)
 
-set(OpenCV_DIR  /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm64_rk3588_install/lib/cmake/opencv4/)
-include_directories(/mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm64_rk3588_install/include/opencv4/)
-include_directories(/usr/include/)
+set(OpenCV_DIR  /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/cmake/opencv4/)
+include_directories(/mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/include/opencv4/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/librga/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/algos/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/xcore/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/uAPI2/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/common/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/iq_parser/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/iq_parser_v2/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rkaiq/smartIr/)
+
+# include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rknn/)
+include_directories(/mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/include/rockchip/)
+
+
 
 find_package(OpenCV REQUIRED)
 # -----------------------
@@ -60,10 +74,14 @@ file(GLOB SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 add_executable(${PROJECT_NAME}
     main.cc
     postprocess.cc
-    v4l2_camera.cpp
-    AudioPlayer.cpp
+    # v4l2_camera.cpp
+    video_capture.cpp
+    udp_sender.cpp
+    rga_drm.hpp
     ${rknpu_yolov5_file}  # 根据 SOC 选择的 yolov5 源文件
 )
+
+
 
 # -----------------------
 # 8. 链接库
@@ -74,12 +92,40 @@ target_link_libraries(${PROJECT_NAME}
     imagedrawing    # utils 子项目库
     ${LIBRKNNRT}    # RKNN 运行时库
     dl              # Linux 动态链接库
-    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm64_rk3588_install/lib/libopencv_core.so
-    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm64_rk3588_install/lib/libopencv_imgcodecs.so
-    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm64_rk3588_install/lib/libopencv_imgproc.so
-    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm64_rk3588_install/lib/libopencv_highgui.so
-    /mnt/c/Users/11198/Documents/C++_libs/zlib-1.2.11/arm64_rk3588_install/lib/libz.so
+    /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/librknnmrt.so
+    /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/librockiva.so
+    /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/libsample_comm.a
+    /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/librockit.so
+    /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/librockchip_mpp.so
+    /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/librkaiq.so
+    
+    
+    
+    /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/librga.so
+    # /mnt/c/Users/11198/Documents/C++_ptactice/rknn_model_zoo-2.3.2/examples/yolov5/cpp/lib/librtsp.a
+    
+
+    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_core.so
+    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_imgcodecs.so
+    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_imgproc.so
+    /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_highgui.so
+    /mnt/c/Users/11198/Documents/C++_libs/zlib-1.2.11/arm32_rockchip830_install/lib/libz.so
 )
+
+
+# target_link_libraries(${PROJECT_NAME}
+#     imageutils      # utils 子项目库
+#     fileutils       # utils 子项目库
+#     imagedrawing    # utils 子项目库
+#     ${LIBRKNNRT}    # RKNN 运行时库
+#     dl              # Linux 动态链接库
+#     /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_core.so
+#     /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_imgcodecs.so
+#     /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_imgproc.so
+#     /mnt/c/Users/11198/Documents/C++_libs/opencv-4.5.3/arm32_rockchip830_install/lib/libopencv_highgui.so
+#     /mnt/c/Users/11198/Documents/C++_libs/zlib-1.2.11/arm32_rockchip830_install/lib/libz.so
+# )
+
 
 # Android 平台额外链接 log 库
 if (CMAKE_SYSTEM_NAME STREQUAL "Android")

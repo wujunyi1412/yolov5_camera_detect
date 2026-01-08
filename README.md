@@ -1,5 +1,15 @@
 # yolov5
 
+
+# 基于瑞芯微demo做的yolov5的视频流的推理以及显示，开发板用的luxfox的1106G3版本
+```bash
+主要修改代码在cpp/main.cc里面，要完整编译的话，只要把这个项目，放到rknn_model_zoo文件夹下面的example里面，然后按照官方步骤编译即可。
+还有librockchip_mpp.so和librockchip_mpp.so.1是两个软链接，自己可以创建一下，指向librockchip_mpp.so.0。
+```
+![demo](1.gif)
+
+
+
 ## Table of contents
 
 - [1. Description](#1-description)

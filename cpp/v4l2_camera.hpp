@@ -13,7 +13,7 @@
 
 #include <opencv2/opencv.hpp>   // cv::Mat、cvtColor 等
 #include "image_utils.h"        // image_buffer_t 定义（图像描述结构体）
-
+// #include "rkmedia_api.h"
 /**
  * @class V4L2Camera
  * @brief V4L2 摄像头采集类（NV12 / MMAP）
@@ -152,3 +152,30 @@ private:
      */
     struct v4l2_buffer* v4l2_buf_;
 };
+
+
+
+// class RKMPICamera {
+// public:
+//     // 构造函数
+//     RKMPICamera(int dev_id, int w, int h);
+
+//     // 析构函数
+//     ~RKMPICamera();
+
+//     // 打开摄像头
+//     bool open();
+
+//     // 关闭摄像头
+//     void close();
+
+//     // 抓取一帧 NV12 数据，类似原来的 grab_buffer
+//     bool grab_buffer(image_buffer_t& out_buf, int timeout_ms = 1000);
+
+// private:
+//     int dev_id_;
+//     int width_;
+//     int height_;
+//     bool is_open_;
+//     CAMERA_ATTR_S cam_attr_;
+// };

@@ -6,7 +6,7 @@
 #include <linux/videodev2.h>// V4L2 定义
 #include <cstring>
 #include <iostream>
-
+// #include "rkmedia_api.h"
 /**
  * 构造函数
  * @param dev  摄像头设备节点，如 "/dev/video0"
@@ -212,6 +212,7 @@ bool V4L2Camera::grab_buffer(image_buffer_t& out_buf) {
     out_buf.height_stride  = height_;
     out_buf.format         = IMAGE_FORMAT_YUV420SP_NV12;
     out_buf.virt_addr      = buffer_;
+    out_buf.vector_virt_addr = nullptr;
     out_buf.size           = buffer_len_;
     out_buf.fd             = fd_;   // 注意：这不是 dmabuf fd，仅是设备 fd
 
@@ -219,3 +220,81 @@ bool V4L2Camera::grab_buffer(image_buffer_t& out_buf) {
     ioctl(fd_, VIDIOC_QBUF, &buf);
     return true;
 }
+
+
+
+
+
+// class RKMPICamera {
+// public:
+//     RKMPICamera(int dev_id, int w, int h)
+//         : dev_id_(dev_id), width_(w), height_(h), is_open_(false) {}
+
+//     ~RKMPICamera() { close(); }
+
+//     bool open() {
+//         RK_MPI_SYS_Init();
+
+//         memset(&cam_attr_, 0, sizeof(cam_attr_));
+//         cam_attr_.u32DeviceId = dev_id_;
+//         cam_attr_.u32Width    = width_;
+//         cam_attr_.u32Height   = height_;
+//         cam_attr_.enPixFmt    = PIX_FMT_NV12;
+//         cam_attr_.u32FrmRate  = 25;
+
+//         if (RK_MPI_Camera_Init(&cam_attr_) != 0) {
+//             std::cerr << "RK_MPI_Camera_Init failed!" << std::endl;
+//             return false;
+//         }
+
+//         // 手动曝光
+//         RK_MPI_ISP_SetExposureMode(dev_id_, RK_ISP_EXPOSURE_MANUAL);
+//         RK_MPI_ISP_SetExposureTime(dev_id_, 1.0f / 4);
+//         RK_MPI_ISP_SetGain(dev_id_, 2.0f);
+
+//         // 手动白平衡
+//         RK_MPI_ISP_SetWhiteBalanceMode(dev_id_, RK_ISP_WB_MANUAL);
+//         RK_MPI_ISP_SetWhiteBalanceGain(dev_id_, 1.2f, 1.0f, 1.0f);
+
+//         is_open_ = true;
+//         return true;
+//     }
+
+//     void close() {
+//         if (is_open_) {
+//             RK_MPI_Camera_DeInit(dev_id_);
+//             is_open_ = false;
+//         }
+//     }
+
+//     // 抓取一帧 NV12 数据，类似原来的 grab_buffer
+//     bool grab_buffer(image_buffer_t& out_buf, int timeout_ms = 1000) {
+//         if (!is_open_) return false;
+
+//         IMAGE_BUFFER_S buf;
+//         if (RK_MPI_Camera_GetFrame(dev_id_, &buf, timeout_ms) != 0)
+//             return false;
+
+//         // 填充 image_buffer_t 结构
+//         out_buf.width           = buf.u32Width;
+//         out_buf.height          = buf.u32Height;
+//         out_buf.width_stride    = buf.u32Stride[0];
+//         out_buf.height_stride   = buf.u32Height;
+//         out_buf.format          = IMAGE_FORMAT_YUV420SP_NV12;
+//         out_buf.virt_addr       = buf.pVirAddr;
+//         out_buf.vector_virt_addr = nullptr;
+//         out_buf.size            = buf.u32BufSize;
+//         out_buf.fd              = -1; // RKMPI 不是 dmabuf，这里填 -1
+
+//         // 放回帧队列
+//         RK_MPI_Camera_ReleaseFrame(dev_id_, &buf);
+//         return true;
+//     }
+
+// private:
+//     int dev_id_;
+//     int width_;
+//     int height_;
+//     bool is_open_;
+//     CAMERA_ATTR_S cam_attr_;
+// };
